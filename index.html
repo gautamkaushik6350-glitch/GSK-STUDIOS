@@ -1,35 +1,227 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b0b12"><meta name="description" content="GSK-STUDIOS AI photo and video creator">
-<link rel="manifest" href="manifest.json"><link rel="icon" href="icons/icon-192.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b12">
 <title>GSK-STUDIOS</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}body{background:#0b0b12;color:#fff;min-height:100vh}.wrap{max-width:900px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;padding:10px 0 20px}.brand{font-size:22px;font-weight:800}.pill{border:1px solid #303044;background:#15151f;border-radius:999px;padding:9px 13px;color:#ddd;font-size:13px}.hero{text-align:center;padding:28px 8px 18px}.hero h1{font-size:40px;margin-bottom:10px}.hero p{color:#aaa}.card{background:#15151f;border:1px solid #292938;border-radius:20px;padding:20px;margin-top:18px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}.tab{padding:12px;border:1px solid #333344;background:#0d0d15;color:#aaa;border-radius:12px;font-weight:700}.tab.active{background:#fff;color:#000}.prompt{width:100%;min-height:150px;background:#0d0d15;color:#fff;border:1px solid #333344;border-radius:14px;padding:16px;font-size:16px;resize:vertical;outline:none}.btn{width:100%;margin-top:14px;padding:16px;border:0;border-radius:14px;background:#fff;color:#000;font-size:16px;font-weight:800}.btn.secondary{background:#242435;color:#fff;border:1px solid #39394d}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.feature{background:#15151f;border:1px solid #292938;border-radius:15px;padding:18px;text-align:center}.feature p{color:#999;font-size:13px;margin-top:6px}.status{color:#aaa;text-align:center;margin-top:14px;min-height:20px}.section{margin-top:18px}.section h2{font-size:19px;margin-bottom:10px}.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}.plan{border:1px solid #292938;border-radius:15px;padding:16px;background:#15151f}.price{font-size:27px;font-weight:800;margin:7px 0}.muted{color:#999;font-size:13px;line-height:1.5}.footer{text-align:center;color:#666;font-size:12px;padding:30px 0}.hidden{display:none}@media(max-width:600px){.hero h1{font-size:31px}.grid,.plans{grid-template-columns:1fr}.top{gap:8px}.brand{font-size:19px}}
+*{box-sizing:border-box}
+body{margin:0;background:#0b0b12;color:white;font-family:Arial,sans-serif}
+.wrap{max-width:600px;margin:auto;padding:20px}
+.card{background:#15151f;border:1px solid #292938;border-radius:20px;padding:20px;margin-top:20px}
+h1{text-align:center}
+input,textarea{width:100%;padding:14px;margin-top:10px;background:#0d0d15;color:white;border:1px solid #333344;border-radius:12px}
+button{width:100%;padding:15px;margin-top:12px;border:0;border-radius:12px;font-weight:bold;font-size:16px}
+.primary{background:white;color:black}
+.secondary{background:#292938;color:white}
+.hidden{display:none}
+.status{text-align:center;color:#aaa;margin-top:15px}
 </style>
 </head>
+
 <body>
 <div class="wrap">
-  <div class="top"><div class="brand">GSK-STUDIOS</div><div class="pill" id="trialPill">1-day free trial</div></div>
-  <section class="hero"><h1>AI Creator Studio</h1><p>Create photos & videos from your ideas.</p></section>
-  <section class="card">
-    <div class="tabs"><button class="tab active" id="photoTab" onclick="setMode('photo')">🖼️ AI Photo</button><button class="tab" id="videoTab" onclick="setMode('video')">🎬 AI Video</button></div>
-    <textarea id="prompt" class="prompt" placeholder="Describe what you want to create..."></textarea>
-    <button class="btn" onclick="generate()">✨ Generate</button>
-    <div class="status" id="status"></div>
-  </section>
-  <section class="section"><h2>Membership</h2><div class="plans"><div class="plan"><b>Free Trial</b><div class="price">1 day</div><div class="muted">Try the creator before subscribing.</div></div><div class="plan"><b>Pro</b><div class="price" id="price">$3 / month</div><div class="muted">Monthly subscription. Price is controlled by the backend so it can be changed later.</div><button class="btn secondary" onclick="subscribe()">Subscribe</button></div></div></section>
-  <div class="grid"><div class="feature"><b>🖼️ Photos</b><p>Text-to-image workflow.</p></div><div class="feature"><b>🎬 Videos</b><p>Text-to-video workflow.</p></div><div class="feature"><b>⚡ Fast</b><p>Simple mobile-first design.</p></div></div>
-  <div class="footer">GSK-STUDIOS • AI creation platform</div>
+
+<div id="authBox" class="card">
+<h1>GSK-STUDIOS</h1>
+<p style="text-align:center;color:#aaa">Create your account</p>
+
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button class="primary" onclick="signup()">Create Account</button>
+<button class="secondary" onclick="login()">Login</button>
+
+<div id="authStatus" class="status"></div>
 </div>
+
+
+<div id="appBox" class="hidden">
+
+<div class="card">
+<h1>✨ AI Creator</h1>
+
+<textarea id="prompt" rows="6"
+placeholder="Example: A cinematic portrait of a person standing in a beautiful mountain landscape..."></textarea>
+
+<button class="primary" onclick="generateImage()">
+✨ Generate AI Image
+</button>
+
+<button class="secondary" onclick="logout()">Logout</button>
+
+<div id="status" class="status"></div>
+</div>
+
+<div class="card">
+<h3>Membership</h3>
+<p>🎁 1-day free trial</p>
+<p>⭐ Pro — $3/month</p>
+<p style="color:#999;font-size:13px">
+Pricing can be changed later from the payment system.
+</p>
+</div>
+
+</div>
+</div>
+
+
 <script>
-const CONFIG={monthlyPriceUSD:3,trialDays:1,backendUrl:''};
-let mode='photo';
-function setMode(m){mode=m;photoTab.classList.toggle('active',m==='photo');videoTab.classList.toggle('active',m==='video');prompt.placeholder=m==='photo'?'Describe the image you want to create...':'Describe the video you want to create...';status.textContent='';}
-function generate(){const p=prompt.value.trim();if(!p){status.textContent='Please describe your idea first.';return;}if(!CONFIG.backendUrl){status.textContent='Creator backend is not connected yet. This app shell is ready for the AI API.';return;}status.textContent='Sending request…';}
-function subscribe(){if(!CONFIG.backendUrl){status.textContent='Payment backend is not connected yet. Price is configured at $'+CONFIG.monthlyPriceUSD+'/month.';return;}window.location.href=CONFIG.backendUrl+'/checkout';}
-price.textContent='$'+CONFIG.monthlyPriceUSD+' / month';
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+// ===============================
+// SUPABASE SETTINGS
+// ===============================
+
+const SUPABASE_URL = "https://zdirbdtnuabrvrwbsdrt.supabase.co/rest/v1/;
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4K2s9gHsw3yapS-juUk2yg_LTQONMm2";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+// ===============================
+// SIGN UP
+// ===============================
+
+async function signup(){
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if(!email || !password){
+    document.getElementById("authStatus").textContent =
+      "Email aur password enter karo.";
+    return;
+  }
+
+  document.getElementById("authStatus").textContent =
+    "Account create ho raha hai...";
+
+  const {error} = await supabaseClient.auth.signUp({
+    email: email,
+    password: password
+  });
+
+  if(error){
+    document.getElementById("authStatus").textContent =
+      error.message;
+    return;
+  }
+
+  document.getElementById("authStatus").textContent =
+    "Account create ho gaya. Email check karo.";
+}
+
+
+// ===============================
+// LOGIN
+// ===============================
+
+async function login(){
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if(!email || !password){
+    document.getElementById("authStatus").textContent =
+      "Email aur password enter karo.";
+    return;
+  }
+
+  document.getElementById("authStatus").textContent =
+    "Login ho raha hai...";
+
+  const {error} =
+    await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  if(error){
+    document.getElementById("authStatus").textContent =
+      error.message;
+    return;
+  }
+
+  showApp();
+}
+
+
+// ===============================
+// SHOW APP
+// ===============================
+
+function showApp(){
+
+  document.getElementById("authBox")
+    .classList.add("hidden");
+
+  document.getElementById("appBox")
+    .classList.remove("hidden");
+}
+
+
+// ===============================
+// LOGOUT
+// ===============================
+
+async function logout(){
+
+  await supabaseClient.auth.signOut();
+
+  document.getElementById("appBox")
+    .classList.add("hidden");
+
+  document.getElementById("authBox")
+    .classList.remove("hidden");
+}
+
+
+// ===============================
+// AI IMAGE
+// ===============================
+
+function generateImage(){
+
+  const prompt =
+    document.getElementById("prompt").value.trim();
+
+  const status =
+    document.getElementById("status");
+
+  if(!prompt){
+
+    status.textContent =
+      "Pehle image ka description likho.";
+
+    return;
+  }
+
+  status.textContent =
+    "AI Image API abhi connect nahi hai. Backend connect karne ke baad yahin actual image generate hogi.";
+}
+
+
+// ===============================
+// AUTO LOGIN CHECK
+// ===============================
+
+supabaseClient.auth.getSession()
+.then(({data}) => {
+
+  if(data.session){
+    showApp();
+  }
+
+});
+
 </script>
-</body></html>
+
+</body>
+</html>
