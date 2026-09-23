@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSK-STUDIOS</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b0b12;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 25px 18px;
+    }
+
+    header {
+      text-align: center;
+      padding: 35px 10px;
+    }
+
+    header h1 {
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #aaa;
+      font-size: 16px;
+    }
+
+    .card {
+      background: #15151f;
+      border: 1px solid #292938;
+      border-radius: 20px;
+      padding: 25px;
+      margin-top: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      background: #0d0d15;
+      color: white;
+      border: 1px solid #333344;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 16px;
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #7777ff;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: #ffffff;
+      color: #000;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .feature {
+      background: #15151f;
+      border: 1px solid #292938;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .feature h3 {
+      margin-bottom: 8px;
+    }
+
+    .feature p {
+      color: #999;
+      font-size: 13px;
+    }
+
+    #message {
+      text-align: center;
+      color: #aaa;
+      margin-top: 15px;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 30px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <header>
+      <h1>GSK-STUDIOS</h1>
+      <p>Create amazing AI photos & videos</p>
+    </header>
+
+    <div class="card">
+      <textarea id="prompt"
+        placeholder="Describe the image you want to create..."></textarea>
+
+      <button onclick="generate()">
+        ✨ Generate AI Image
+      </button>
+
+      <div id="message">
+        AI generation system will be connected here 🚀
+      </div>
+    </div>
+
+    <div class="features">
+
+      <div class="feature">
+        <h3>🖼️ AI Photos</h3>
+        <p>Create images from text prompts.</p>
+      </div>
+
+      <div class="feature">
+        <h3>🎬 AI Videos</h3>
+        <p>Generate videos from your ideas.</p>
+      </div>
+
+      <div class="feature">
+        <h3>⚡ Fast</h3>
+        <p>Simple and easy AI creation.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function generate() {
+      const prompt = document.getElementById("prompt").value.trim();
+      const message = document.getElementById("message");
+
+      if (!prompt) {
+        alert("Please describe the image first.");
+        return;
+      }
+
+      message.style.display = "block";
+      message.innerText =
+        "Your AI generation system will be connected in the next step 🚀";
+    }
+  </script>
+
+</body>
+</html>
